@@ -181,7 +181,7 @@ func formatReportHTML(reports []SummaryReport, fromDate, toDate string) string {
 	<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
 	<body style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px;">
 		<div style="max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-			<h2 style="text-align: center; color: #cc0000;">After-Hours  Driving Summary Report - Pakenham</h2>
+			<h2 style="text-align: center; color: #cc0000;">After-Hours  Driving Summary Report </h2>
 			<p style="text-align: center; color: #333;">Period: ` + timeRange + `</p>
 			<table style="width: 100%; border-collapse: collapse; margin-top: 20px;" border="1">
 				<tr style="background-color: #f2f2f2;">
