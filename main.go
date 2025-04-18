@@ -14,7 +14,6 @@ import (
 	"time"
 )
 
-// Struct for summary report response
 type SummaryReport struct {
 	DeviceID     int     `json:"deviceId"`
 	DeviceName   string  `json:"deviceName"`
@@ -43,7 +42,6 @@ func main() {
 	fmt.Println("✅ Authentication Successful!")
 
 	location, _ := time.LoadLocation("Australia/Melbourne")
-
 	now := time.Now().In(location)
 	yesterday := now.AddDate(0, 0, -1)
 
@@ -53,7 +51,7 @@ func main() {
 	fromDate := fromTime.Format(time.RFC3339)
 	toDate := toTime.Format(time.RFC3339)
 
-	groupIDs := []int{1, 2, 3} // Example group IDs
+	groupIDs := []int{1, 2, 3}
 	var reports []SummaryReport
 	var wg sync.WaitGroup
 	reportChan := make(chan []SummaryReport)
@@ -93,26 +91,15 @@ func main() {
 	}
 
 	for i := range reports {
-		reports[i].Distance /= 1000 // Convert meters to km
+		reports[i].Distance /= 1000
 	}
-
-	jsonOutput, err := json.MarshalIndent(reports, "", "  ")
-	if err != nil {
-		fmt.Println("❌ Error converting report to JSON:", err)
-		os.Exit(1)
-	}
-
-	fmt.Println("\n📊 After-Hours Summary Report JSON Output (Distance in KM):")
-	fmt.Println(string(jsonOutput))
 
 	emailBody := formatReportHTML(reports, fromDate, toDate)
-	err = sendEmail("After-Hours Summary Report", emailBody)
-	if err != nil {
+	if err := sendEmail("After-Hours Summary Report", emailBody); err != nil {
 		fmt.Println("❌ Error sending email:", err)
 	} else {
 		fmt.Println("📧 Email sent successfully!")
 	}
-	fmt.Println("📆 Time Period:", fromDate, "to", toDate)
 }
 
 func authenticate(client *http.Client, apiURL, username, password string) error {
@@ -136,12 +123,9 @@ func authenticate(client *http.Client, apiURL, username, password string) error 
 	defer resp.Body.Close()
 
 	body, _ := io.ReadAll(resp.Body)
-	fmt.Println("🔍 Authentication Response:", string(body))
-
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("authentication failed with status %d: %s", resp.StatusCode, string(body))
 	}
-
 	return nil
 }
 
@@ -185,13 +169,48 @@ func getSummaryReport(ctx context.Context, client *http.Client, apiURL, startTim
 }
 
 func formatReportHTML(reports []SummaryReport, fromDate, toDate string) string {
-	html := fmt.Sprintf(`<h2>After-Hours Summary Report<br><small>%s to %s</small></h2>`, fromDate[:16], toDate[:16])
-	html += `<table border="1" cellpadding="5" cellspacing="0"><tr><th>Device Name</th><th>Distance (km)</th><th>Spent Fuel (L)</th><th>Engine Hours</th></tr>`
+	fromParsed, _ := time.Parse(time.RFC3339, fromDate)
+	toParsed, _ := time.Parse(time.RFC3339, toDate)
+
+	timeRange := fmt.Sprintf("%s to %s",
+		fromParsed.Format("02 Jan 2006 15:04"),
+		toParsed.Format("02 Jan 2006 15:04"))
+
+	html := `
+	<html>
+	<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+	<body style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px;">
+		<div style="max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+			<h2 style="text-align: center; color: #cc0000;">After-Hours  Driving Summary Report - Pakenham</h2>
+			<p style="text-align: center; color: #333;">Period: ` + timeRange + `</p>
+			<table style="width: 100%; border-collapse: collapse; margin-top: 20px;" border="1">
+				<tr style="background-color: #f2f2f2;">
+					<th style="padding: 10px;">Device Name</th>
+					<th style="padding: 10px;">Distance (km)</th>
+					<th style="padding: 10px;">Spent Fuel (L)</th>
+					<th style="padding: 10px;">Engine Hours</th>
+				</tr>`
+
 	for _, r := range reports {
-		html += fmt.Sprintf("<tr><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td></tr>",
-			r.DeviceName, r.Distance, r.SpentFuel, r.EngineHours)
+		style := ""
+		if r.Distance > 20 {
+			style = "style='color:darkorange; font-weight:bold;'"
+		}
+		html += fmt.Sprintf(`
+			<tr %s style="text-align: center;">
+				<td style="padding: 8px;">%s</td>
+				<td style="padding: 8px;">%.2f</td>
+				<td style="padding: 8px;">%.2f</td>
+				<td style="padding: 8px;">%.2f</td>
+			</tr>`, style, r.DeviceName, r.Distance, r.SpentFuel, r.EngineHours)
 	}
-	html += "</table>"
+
+	html += `
+			</table>
+			<p style="text-align: center; font-size: 12px; color: #888; margin-top: 20px;">© 2025 SunRu Fleet Management</p>
+		</div>
+	</body>
+	</html>`
 	return html
 }
 
@@ -204,17 +223,10 @@ func sendEmail(subject, body string) error {
 	m := mail.NewMessage()
 	m.SetHeader("From", smtpUser)
 	m.SetHeader("To", "dandydiner@outlook.com")
-	//m.SetHeader("To", "malien.n@sunru.com.au", "malien7037@gmail.com")
-	m.SetHeader("Cc", "malien.n@sunru.com.au", "malien7037@gmail.com")
+	m.SetHeader("Cc", "malien.n@sunru.com.au")
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", body)
 
 	d := mail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
-
-	if err := d.DialAndSend(m); err != nil {
-		return fmt.Errorf("failed to send email: %v", err)
-	}
-
-	fmt.Println("✅ Email sent successfully!")
-	return nil
+	return d.DialAndSend(m)
 }
