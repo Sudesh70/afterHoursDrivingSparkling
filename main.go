@@ -215,10 +215,10 @@ func formatReportHTML(reports []SummaryReport, fromDate, toDate string) string {
 }
 
 func sendEmail(subject, body string) error {
-	smtpHost := "mail.sunru.com.au"
-	smtpPort := 587
-	smtpUser := "support@sunru.com.au"
-	smtpPass := "Corona@2020"
+	smtpHost := "smtp.titan.email"
+	smtpPort := 465 // switched to STARTTLS port
+	smtpUser := "info@suntrack.com.au"
+	smtpPass := "Dehan@2009228"
 
 	m := mail.NewMessage()
 	m.SetHeader("From", smtpUser)
