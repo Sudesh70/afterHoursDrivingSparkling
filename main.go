@@ -221,7 +221,7 @@ func sendEmail(subject, body string) error {
 	smtpPass := "Dehan@2009228"
 
 	m := mail.NewMessage()
-	m.SetHeader("From", smtpUser)
+	m.SetAddressHeader("From", smtpUser, "SunTrack-GPS")
 	m.SetHeader("To", "dandydiner@outlook.com")
 	m.SetHeader("Cc", "malien.n@sunru.com.au")
 	m.SetHeader("Subject", subject)
