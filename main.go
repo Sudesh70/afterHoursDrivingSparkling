@@ -120,7 +120,12 @@ func authenticate(client *http.Client, apiURL, username, password string) error 
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
 
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
@@ -153,7 +158,12 @@ func getSummaryReport(ctx context.Context, client *http.Client, apiURL, startTim
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -221,7 +231,7 @@ func sendEmail(subject, body string) error {
 	smtpPass := "Dehan@2009228"
 
 	m := mail.NewMessage()
-	m.SetAddressHeader("From", smtpUser, "SunTrack-GPS")
+	m.SetAddressHeader("From", smtpUser, "SunTrack-GPS (After-Hours)")
 	m.SetHeader("To", "dandydiner@outlook.com")
 	m.SetHeader("Cc", "malien.n@sunru.com.au")
 	m.SetHeader("Subject", subject)
