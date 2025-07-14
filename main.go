@@ -51,7 +51,7 @@ func main() {
 	fromDate := fromTime.Format(time.RFC3339)
 	toDate := toTime.Format(time.RFC3339)
 
-	groupIDs := []int{1, 2, 3}
+	groupIDs := []int{1, 2, 3, 8}
 	var reports []SummaryReport
 	var wg sync.WaitGroup
 	reportChan := make(chan []SummaryReport)
