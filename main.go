@@ -44,9 +44,10 @@ func main() {
 	location, _ := time.LoadLocation("Australia/Melbourne")
 	now := time.Now().In(location)
 	yesterday := now.AddDate(0, 0, -1)
+	today := now.AddDate(0, 0, 0)
 
 	fromTime := time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), 18, 0, 0, 0, location)
-	toTime := time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), 23, 59, 59, 0, location)
+	toTime := time.Date(today.Year(), today.Month(), today.Day(), 4, 59, 59, 0, location)
 
 	fromDate := fromTime.Format(time.RFC3339)
 	toDate := toTime.Format(time.RFC3339)
@@ -232,6 +233,7 @@ func sendEmail(subject, body string) error {
 
 	m := mail.NewMessage()
 	m.SetAddressHeader("From", smtpUser, "SunTrack-GPS (After-Hours)")
+	//m.SetHeader("To", "malien.n@sunru.com.au")
 	m.SetHeader("To", "dandydiner@outlook.com")
 	m.SetHeader("Cc", "malien.n@sunru.com.au", "swijesekara524@gmail.com", "pathum.sarathchandra@gmail.com", "isuruperera@live.com", "sandymody.sparkling@gmail.com")
 	m.SetHeader("Subject", subject)
