@@ -95,7 +95,14 @@ func main() {
 		reports[i].Distance /= 1000
 	}
 
-	emailBody := formatReportHTML(reports, fromDate, toDate)
+	var filteredReports []SummaryReport
+	for _, report := range reports {
+		if report.Distance > 0 {
+			filteredReports = append(filteredReports, report)
+		}
+	}
+
+	emailBody := formatReportHTML(filteredReports, fromDate, toDate)
 	if err := sendEmail("After-Hours Summary Report", emailBody); err != nil {
 		fmt.Println("❌ Error sending email:", err)
 	} else {
