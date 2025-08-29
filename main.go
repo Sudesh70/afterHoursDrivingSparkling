@@ -242,7 +242,7 @@ func sendEmail(subject, body string) error {
 	m.SetAddressHeader("From", smtpUser, "SunTrack-GPS (After-Hours)")
 	//m.SetHeader("To", "malien.n@sunru.com.au")
 	m.SetHeader("To", "dandydiner@outlook.com")
-	m.SetHeader("Cc", "malien.n@sunru.com.au", "swijesekara524@gmail.com", "pathum.sarathchandra@gmail.com", "isuruperera@live.com", "sandymody.sparkling@gmail.com")
+	m.SetHeader("Cc", "malien.n@sunru.com.au", "swijesekara524@gmail.com", "pathum.sarathchandra@gmail.com", "isuruperera@live.com", "sandymody.sparkling@gmail.com", "theekshanabuddhika1985@gmail.com", "gihanvishvanath@gmail.com", "kcapache@gmail.com")
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", body)
 
