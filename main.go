@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"gopkg.in/mail.v2"
 	"io"
 	"net/http"
 	"net/http/cookiejar"
@@ -12,6 +11,8 @@ import (
 	"os"
 	"sync"
 	"time"
+
+	"gopkg.in/mail.v2"
 )
 
 type SummaryReport struct {
@@ -242,7 +243,7 @@ func sendEmail(subject, body string) error {
 	m.SetAddressHeader("From", smtpUser, "SunTrack-GPS (After-Hours)")
 	//m.SetHeader("To", "malien.n@sunru.com.au")
 	m.SetHeader("To", "v03974sp@gmail.com")
-	m.SetHeader("Cc", "malien.n@sunru.com.au", "swijesekara524@gmail.com", "pathum.sarathchandra@gmail.com", "isuruperera@live.com", "sandymody.sparkling@gmail.com", "theekshanabuddhika1985@gmail.com", "gihanvishvanath@gmail.com", "kcapache@gmail.com")
+	m.SetHeader("Cc", "malien.n@sunru.com.au", "swijesekara524@gmail.com", "pathum.sarathchandra@gmail.com", "isuruperera@live.com", "sandymody.sparkling@gmail.com", "theekshanabuddhika1985@gmail.com", "gihanvishvanath@gmail.com", "kcapache@gmail.com", "michaelperera299@gmail.com")
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", body)
 
